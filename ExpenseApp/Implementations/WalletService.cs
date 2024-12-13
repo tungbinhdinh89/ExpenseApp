@@ -1,4 +1,5 @@
-﻿using ExpenseApp.Data;
+﻿using ExpenseApp.Common;
+using ExpenseApp.Data;
 using ExpenseApp.Data.Entities;
 using ExpenseApp.DTOs;
 using ExpenseApp.Extensions;
@@ -29,21 +30,35 @@ namespace ExpenseApp.Implementations
             return Result<int>.Ok(entity.Count, "Expense added successfully");
         }
 
-        public async Task<Result<List<ExpenseDTO>>> ReportExpenses(string userEmail, DateTime from, DateTime to)
+        public async Task<Result<List<ExpenseDTO>>> ReportExpenses(string userEmail, Filter filter)
         {
             var profile = await dbContext.Profiles.AsNoTracking().FirstOrDefaultAsync(p => p.Email == userEmail);
             if (profile == null) return Result<List<ExpenseDTO>>.Fail(ResultCode.PROFILE_DOES_NOT_EXIST);
 
-            var report = await dbContext.Expenses.Where(e => e.ProfileId == profile.Id && e.CreatedAt >= from && e.CreatedAt <= to)
-                                                 .Select(e => new ExpenseDTO
-                                                 {
-                                                     Category = e.Category,
-                                                     Description = e.Description,
-                                                     Price = e.Price,
-                                                     CreatedAt = e.CreatedAt
-                                                 })
-                                                 .OrderBy(e => e.CreatedAt)
-                                                 .ToListAsync();
+            var query = dbContext.Expenses.Where(e => e.ProfileId == profile.Id);
+
+            if (filter.From.HasValue) query = query.Where(e => e.CreatedAt >= filter.From.Value);
+
+            if (filter.To.HasValue) query = query.Where(e => e.CreatedAt <= filter.To.Value);
+
+            var report = await query.Select(e => new ExpenseDTO
+            {
+                Category = e.Category,
+                Description = e.Description,
+                Price = e.Price,
+                CreatedAt = e.CreatedAt,
+            }).OrderBy(e => e.CreatedAt).ToListAsync();
+
+            //var report = await dbContext.Expenses.Where(e => e.ProfileId == profile.Id && e.CreatedAt >= from && e.CreatedAt <= to)
+            //                                     .Select(e => new ExpenseDTO
+            //                                     {
+            //                                         Category = e.Category,
+            //                                         Description = e.Description,
+            //                                         Price = e.Price,
+            //                                         CreatedAt = e.CreatedAt
+            //                                     })
+            //                                     .OrderBy(e => e.CreatedAt)
+            //                                     .ToListAsync();
             return Result<List<ExpenseDTO>>.Ok(report, "Get report expenses successfully");
         }
 

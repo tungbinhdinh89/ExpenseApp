@@ -1,4 +1,5 @@
-﻿using ExpenseApp.DTOs;
+﻿using ExpenseApp.Common;
+using ExpenseApp.DTOs;
 using ExpenseApp.Extensions;
 
 namespace ExpenseApp.Services
@@ -7,6 +8,6 @@ namespace ExpenseApp.Services
     {
         Task<Result<int>> AddExpenses(List<ExpenseDTO> expenses, string userEmail);
         Task<Result<int>> UpdateExpense(int id, string userEmail, ExpenseDTO expense);
-        Task<Result<List<ExpenseDTO>>> ReportExpenses(string userEmail, DateTime from, DateTime to);
+        Task<Result<List<ExpenseDTO>>> ReportExpenses(string userEmail, Filter filter);
     }
 }

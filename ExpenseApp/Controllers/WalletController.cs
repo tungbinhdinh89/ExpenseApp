@@ -1,4 +1,5 @@
-﻿using ExpenseApp.DTOs;
+﻿using ExpenseApp.Common;
+using ExpenseApp.DTOs;
 using ExpenseApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,10 +52,15 @@ namespace ExpenseApp.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> ReportExpenses(string userEmail, DateTime from, DateTime to)
+        [HttpGet("report")]
+        public async Task<IActionResult> ReportExpenses([FromHeader(Name = "user")] string userEmail, [FromQuery] DateTime from, [FromQuery] DateTime to)
         {
-            var result = await walletService.ReportExpenses(userEmail, from, to);
+            var filter = new Filter
+            {
+                From = from,
+                To = to
+            };
+            var result = await walletService.ReportExpenses(userEmail, filter);
             return Ok(result);
         }
     }
