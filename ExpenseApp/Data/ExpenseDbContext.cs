@@ -12,6 +12,7 @@ namespace ExpenseApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new ExpenseConfiguration());
             modelBuilder.ApplyConfiguration(new ProfileConfiguration());
         }
     }

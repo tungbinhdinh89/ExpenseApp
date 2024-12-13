@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExpenseApp.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigrate : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace ExpenseApp.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,11 +32,11 @@ namespace ExpenseApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfileId = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProfileId = table.Column<int>(type: "int", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

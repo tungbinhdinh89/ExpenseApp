@@ -1,5 +1,7 @@
 using ExpenseApp.Data;
 using ExpenseApp.Exceptions;
+using ExpenseApp.Implementations;
+using ExpenseApp.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ExpenseDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,7 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
