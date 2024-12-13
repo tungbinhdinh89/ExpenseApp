@@ -31,24 +31,20 @@ namespace ExpenseApp.Implementations
 
         public async Task<Result<List<ExpenseDTO>>> ReportExpenses(string userEmail, DateTime from, DateTime to)
         {
+            var profile = await dbContext.Profiles.AsNoTracking().FirstOrDefaultAsync(p => p.Email == userEmail);
+            if (profile == null) return Result<List<ExpenseDTO>>.Fail(ResultCode.PROFILE_DOES_NOT_EXIST);
 
-            //var profile = await dbContext.Profiles.FirstOrDefaultAsync(p => p.Email == userEmail);
-            //if (profile == null) return new NotFoundObjectResult("User not found");
-
-            //var expenses = await dbContext.Expenses.Where(
-            //    e => e.ProfileId == profile.Id && e.CreatedAt >= from && e.CreatedAt <= to
-            //    ).OrderBy(e => e.CreatedAt).ToListAsync();
-
-            //var result = expenses.Select(e => new ExpenseDTO
-            //{
-            //    Category = e.Category,
-            //    Description = e.Description,
-            //    Price = e.Price,
-            //    CreatedAt = e.CreatedAt
-            //}).ToList();
-
-            //return new OkObjectResult(result);
-            throw new NotImplementedException();
+            var report = await dbContext.Expenses.Where(e => e.ProfileId == profile.Id && e.CreatedAt >= from && e.CreatedAt <= to)
+                                                 .Select(e => new ExpenseDTO
+                                                 {
+                                                     Category = e.Category,
+                                                     Description = e.Description,
+                                                     Price = e.Price,
+                                                     CreatedAt = e.CreatedAt
+                                                 })
+                                                 .OrderBy(e => e.CreatedAt)
+                                                 .ToListAsync();
+            return Result<List<ExpenseDTO>>.Ok(report, "Get report expenses successfully");
         }
 
         public async Task<Result<int>> UpdateExpense(int id, string userEmail, ExpenseDTO expense)
